@@ -1,1 +1,1 @@
-web: cd apps/server && npm start
+web: cd apps/server && node dist/src/app.js

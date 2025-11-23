@@ -9,6 +9,7 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
+    "heroku-prebuild": "corepack enable && corepack prepare pnpm@9.0.0 --activate",
     "heroku-postbuild": "cd apps/server && pnpm run build && pnpm run generate && pnpm run seed && pnpm run iteminfo"
   },
   "author": "JadlionHD <jadlion.dev@gmail.com>",

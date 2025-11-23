@@ -23,10 +23,5 @@ tests/
 # Assets (if not needed in production)
 apps/server/assets/ignore/
 
-# Build artifacts (will be rebuilt)
-dist/
-build/
-
-# Cache
+# Cache and turbo
 .turbo/
-.cache/
