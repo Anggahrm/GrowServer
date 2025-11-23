@@ -15,8 +15,8 @@
   ],
   "env": {
     "JWT_SECRET": {
-      "description": "Secret key for JWT authentication",
-      "value": "SuperSecretDoNotShareToAnyoneElse",
+      "description": "Secret key for JWT authentication. Generate a strong random secret.",
+      "generator": "secret",
       "required": true
     },
     "DISCORD_BOT_TOKEN": {

@@ -4,7 +4,6 @@
 # Documentation
 *.md
 !README.md
-!HEROKU_DEPLOYMENT.md
 docs/
 
 # Development files

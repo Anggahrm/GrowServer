@@ -38,6 +38,7 @@ export async function Web(base: Base) {
   
   if (isHeroku) {
     // On Heroku, SSL is terminated at the router, so we use HTTP
+    // PORT is always set by Heroku, fallback to 3000 is for safety only
     const port = parseInt(process.env.PORT || "3000", 10);
     serve(
       {
