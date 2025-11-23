@@ -83,8 +83,8 @@ export class Base {
         }\n© JadlionHD 2022-${new Date().getFullYear()}`
       );
 
-      // Check if running on Heroku
-      const isHeroku = !!process.env.PORT;
+      // Check if running on Heroku (DYNO env variable is set by Heroku)
+      const isHeroku = !!process.env.DYNO;
 
       // Check if port is available (skip on Heroku)
       if (!isHeroku) {

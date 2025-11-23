@@ -33,8 +33,8 @@ export async function Web(base: Base) {
   app.route("/", await new PlayerRoute(base).execute());
   app.route("/", await new GrowtopiaRoute(base).execute());
 
-  // Check if running on Heroku (PORT env variable is set by Heroku)
-  const isHeroku = !!process.env.PORT;
+  // Check if running on Heroku (DYNO env variable is set by Heroku)
+  const isHeroku = !!process.env.DYNO;
   
   if (isHeroku) {
     // On Heroku, SSL is terminated at the router, so we use HTTP
