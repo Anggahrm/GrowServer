@@ -83,18 +83,26 @@ export class Base {
         }\n© JadlionHD 2022-${new Date().getFullYear()}`
       );
 
-      // Check if port is available
-      const port = this.server.config.enet?.port || 17091;
-      const portInUse = await checkPortInUse(port);
+      // Check if running on Heroku
+      const isHeroku = !!process.env.PORT;
 
-      if (portInUse) {
-        throw new Error(
-          `Port ${port} is already in use. Please choose a different port.`
-        );
+      // Check if port is available (skip on Heroku)
+      if (!isHeroku) {
+        const port = this.server.config.enet?.port || 17091;
+        const portInUse = await checkPortInUse(port);
+
+        if (portInUse) {
+          throw new Error(
+            `Port ${port} is already in use. Please choose a different port.`
+          );
+        }
       }
 
-      await downloadMkcert();
-      await setupMkcert();
+      // Skip mkcert setup on Heroku (SSL is handled by Heroku's router)
+      if (!isHeroku) {
+        await downloadMkcert();
+        await setupMkcert();
+      }
 
       await downloadWebsite();
       await setupWebsite();
@@ -116,17 +124,23 @@ export class Base {
 
       await Web(this);
 
-      consola.log(`🔔Starting ENet server on port ${port}`);
+      // Only start ENet server if not on Heroku (Heroku doesn't support UDP)
+      if (!isHeroku) {
+        const port = this.server.config.enet?.port || 17091;
+        consola.log(`🔔Starting ENet server on port ${port}`);
 
-      // Add error handling for server start
-      await new Promise((resolve, reject) => {
-        try {
-          this.server.listen();
-          resolve(true);
-        } catch (err) {
-          reject(err);
-        }
-      });
+        // Add error handling for server start
+        await new Promise((resolve, reject) => {
+          try {
+            this.server.listen();
+            resolve(true);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      } else {
+        consola.warn(`⚠️ ENet server disabled on Heroku (UDP not supported)`);
+      }
 
       await this.loadItems();
       await this.loadEvents();
