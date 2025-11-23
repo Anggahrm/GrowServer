@@ -1,0 +1,42 @@
+{
+  "name": "GrowServer",
+  "description": "A Growtopia private server built with Node.js and Bun.js",
+  "repository": "https://github.com/Anggahrm/GrowServer",
+  "keywords": [
+    "growtopia",
+    "server",
+    "nodejs",
+    "game-server"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "JWT_SECRET": {
+      "description": "Secret key for JWT authentication. Generate a strong random secret.",
+      "generator": "secret",
+      "required": true
+    },
+    "DISCORD_BOT_TOKEN": {
+      "description": "Discord bot token (optional)",
+      "required": false
+    },
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    },
+    "RUNTIME_ENV": {
+      "description": "Runtime environment (node or bun)",
+      "value": "node"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "addons": []
+}

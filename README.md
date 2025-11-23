@@ -47,6 +47,18 @@ To run the development server by
 $ pnpm run start
 ```
 
+## Deployment
+
+### Heroku
+
+You can deploy GrowServer to Heroku with some limitations (web interface only, no UDP/ENet support). See the [Heroku Deployment Guide](./HEROKU_DEPLOYMENT.md) for detailed instructions.
+
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+### Docker
+
+Docker support is planned for the future.
+
 ## Development
 
 In order to make new login system work you need to install [mkcert](https://github.com/FiloSottile/mkcert) on this [download page](https://github.com/FiloSottile/mkcert/releases) (I'd recommend using [Lets encrypt](https://letsencrypt.org/getting-started/) for production only)

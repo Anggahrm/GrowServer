@@ -1,0 +1,26 @@
+# Heroku Slug Ignore File
+# Files and directories to exclude from the Heroku slug
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Development files
+.vscode/
+.github/
+.git/
+
+# Test files
+test/
+tests/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Assets (if not needed in production)
+apps/server/assets/ignore/
+
+# Cache and turbo
+.turbo/

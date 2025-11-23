@@ -33,67 +33,85 @@ export async function Web(base: Base) {
   app.route("/", await new PlayerRoute(base).execute());
   app.route("/", await new GrowtopiaRoute(base).execute());
 
-  const key = await getFile(base.config.web.tls.key);
-  const cert = await getFile(base.config.web.tls.cert);
-
-  const keyPem = await getFile(
-    base.config.webFrontend.tls.key
-  );
-  const certPem = await getFile(
-    base.config.webFrontend.tls.cert
-  );
-
-  if (process.env.RUNTIME_ENV === "node") {
+  // Check if running on Heroku (DYNO env variable is set by Heroku)
+  const isHeroku = !!process.env.DYNO;
+  
+  if (isHeroku) {
+    // On Heroku, SSL is terminated at the router, so we use HTTP
+    // PORT is always set by Heroku, fallback to 3000 is for safety only
+    const port = parseInt(process.env.PORT || "3000", 10);
     serve(
       {
-        fetch:         app.fetch,
-        port:          base.config.web.port,
-        createServer,
-        serverOptions: {
+        fetch: app.fetch,
+        port
+      },
+      () => {
+        consola.log(`⛅Running HTTP server on port ${port} (Heroku mode)`);
+      }
+    );
+  } else {
+    const key = await getFile(base.config.web.tls.key);
+    const cert = await getFile(base.config.web.tls.cert);
+
+    const keyPem = await getFile(
+      base.config.webFrontend.tls.key
+    );
+    const certPem = await getFile(
+      base.config.webFrontend.tls.cert
+    );
+
+    if (process.env.RUNTIME_ENV === "node") {
+      serve(
+        {
+          fetch:         app.fetch,
+          port:          base.config.web.port,
+          createServer,
+          serverOptions: {
+            key,
+            cert
+          }
+        },
+        () => {
+          consola.log(`⛅Running HTTPS server on https://localhost`);
+        }
+      );
+
+      serve(
+        {
+          fetch:         app.fetch,
+          port:          base.config.webFrontend.port,
+          createServer,
+          serverOptions: {
+            key:  keyPem,
+            cert: certPem
+          }
+        },
+        () => {
+          consola.log(`⛅Running Login server on https://${base.config.web.loginUrl}`);
+        }
+      );
+    } else if (process.env.RUNTIME_ENV === "bun") {
+
+      consola.log(`⛅Running Bun HTTP server on http://localhost`);
+      Bun.serve({
+        fetch: app.fetch,
+        port:  base.config.web.port,
+        tls:   {
           key,
           cert
         }
-      },
-      () => {
-        consola.log(`⛅Running HTTPS server on https://localhost`);
-      }
-    );
-
-    serve(
-      {
-        fetch:         app.fetch,
-        port:          base.config.webFrontend.port,
-        createServer,
-        serverOptions: {
+      });
+      consola.log(`⛅Running Bun HTTPS server on https://localhost`);
+      Bun.serve({
+        fetch: app.fetch,
+        port:  base.config.webFrontend.port,
+        tls:   {
           key:  keyPem,
           cert: certPem
         }
-      },
-      () => {
-        consola.log(`⛅Running Login server on https://${base.config.web.loginUrl}`);
-      }
-    );
-  } else if (process.env.RUNTIME_ENV === "bun") {
-
-    consola.log(`⛅Running Bun HTTP server on http://localhost`);
-    Bun.serve({
-      fetch: app.fetch,
-      port:  base.config.web.port,
-      tls:   {
-        key,
-        cert
-      }
-    });
-    consola.log(`⛅Running Bun HTTPS server on https://localhost`);
-    Bun.serve({
-      fetch: app.fetch,
-      port:  base.config.webFrontend.port,
-      tls:   {
-        key:  keyPem,
-        cert: certPem
-      }
-    });
-    consola.log(`⛅Running Bun Login server on https://${base.config.web.loginUrl}`);
+      });
+      consola.log(`⛅Running Bun Login server on https://${base.config.web.loginUrl}`);
+    }
   }
 }
 
