@@ -44,11 +44,11 @@ primary_region = "sin"
   [[services.ports]]
     port = 17091
 
-# HTTPS logon service
+# HTTPS logon service (TLS termination)
 [[services]]
   internal_port = 443
   protocol = "tcp"
 
   [[services.ports]]
-    handlers = ["tls"]
+    handlers = ["tls", "http"]
     port = 17443

@@ -161,12 +161,14 @@ fly auth login
 fly launch
 ```
 
-3. Create `fly.toml` for UDP support:
+3. The `fly.toml` file is included in this repository. Customize it for UDP support:
 ```toml
-[services]
+[[services]]
+  internal_port = 17091
+  protocol = "udp"
+
   [[services.ports]]
     port = 17091
-    handlers = ["udp"]
 ```
 
 4. Add PostgreSQL:

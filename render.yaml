@@ -52,4 +52,4 @@ databases:
 # Uncomment below if you have a paid plan
 # redis:
 #   - name: growserver-redis
-#     plan: free
+#     plan: starter
