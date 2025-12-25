@@ -41,7 +41,33 @@ export interface Config {
 
 const configPath = join(__dirname, "config.toml");
 const configContent = readFileSync(configPath, "utf-8");
-const config = parse(configContent) as unknown as Config;
+const baseConfig = parse(configContent) as unknown as Config;
+
+// Apply environment variable overrides for cloud deployment (e.g., Heroku)
+const config: Config = {
+  web: {
+    ...baseConfig.web,
+    address: process.env.WEB_ADDRESS || baseConfig.web.address,
+    port: process.env.WEB_PORT ? parseInt(process.env.WEB_PORT, 10) : baseConfig.web.port,
+    ports: process.env.SERVER_PORTS 
+      ? process.env.SERVER_PORTS.split(",").map((p) => parseInt(p.trim(), 10))
+      : baseConfig.web.ports,
+    loginUrl: process.env.LOGIN_URL || baseConfig.web.loginUrl,
+    cdnUrl: process.env.CDN_URL || baseConfig.web.cdnUrl,
+  },
+  webFrontend: {
+    ...baseConfig.webFrontend,
+    port: process.env.PORT 
+      ? parseInt(process.env.PORT, 10) 
+      : (process.env.WEB_FRONTEND_PORT 
+        ? parseInt(process.env.WEB_FRONTEND_PORT, 10) 
+        : baseConfig.webFrontend.port),
+  },
+  server: {
+    ...baseConfig.server,
+    logLevel: process.env.LOG_LEVEL || baseConfig.server.logLevel,
+  },
+};
 const frontend = () => {
   return {
     tls: {
