@@ -1,0 +1,55 @@
+# Render Blueprint for GrowServer
+# See https://render.com/docs/blueprint-spec for more information
+
+services:
+  # Web Frontend / Login Page
+  - type: web
+    name: growserver-web
+    env: node
+    buildCommand: pnpm install && pnpm run build
+    startCommand: pnpm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: growserver-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: growserver-redis
+          type: redis
+          property: connectionString
+
+  # Game Server (Private Service for UDP support)
+  - type: private
+    name: growserver-game
+    env: node
+    buildCommand: pnpm install && pnpm run build
+    startCommand: pnpm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: growserver-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: growserver-redis
+          type: redis
+          property: connectionString
+
+databases:
+  - name: growserver-db
+    databaseName: growserver
+    user: growserver
+    plan: free
+
+# Note: Redis requires a paid plan on Render
+# Uncomment below if you have a paid plan
+# redis:
+#   - name: growserver-redis
+#     plan: starter

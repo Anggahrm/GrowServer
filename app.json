@@ -1,0 +1,64 @@
+{
+  "$schema": "https://devcenter.heroku.com/articles/app-json-schema",
+  "name": "GrowServer",
+  "description": "A Growtopia private server built with Node.js and Bun.js, powered by growtopia.js",
+  "keywords": ["growtopia", "private-server", "nodejs", "game-server"],
+  "repository": "https://github.com/StileDevs/GrowServer",
+  "logo": "https://raw.githubusercontent.com/StileDevs/GrowServer/main/apps/server/assets/ignore/banner.png",
+  "success_url": "/",
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production"
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT authentication",
+      "generator": "secret"
+    },
+    "DATABASE_URL": {
+      "description": "PostgreSQL database URL (automatically set if using Heroku Postgres addon)",
+      "required": true
+    },
+    "REDIS_URL": {
+      "description": "Redis URL (automatically set if using Heroku Redis addon)",
+      "required": false
+    },
+    "WEB_ADDRESS": {
+      "description": "Server address for game connections",
+      "required": true
+    },
+    "LOGIN_URL": {
+      "description": "Login URL for game client",
+      "required": true
+    },
+    "CDN_URL": {
+      "description": "CDN URL for game assets",
+      "value": "growserver-cache.netlify.app"
+    },
+    "SERVER_PORTS": {
+      "description": "Comma-separated list of game server ports",
+      "value": "17091"
+    },
+    "LOG_LEVEL": {
+      "description": "Logging level (debug, info, warn, error)",
+      "value": "info"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql:essential-0"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "stack": "heroku-24",
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}
